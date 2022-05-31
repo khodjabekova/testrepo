@@ -1,0 +1,75 @@
+{% extends "admin/delete_selected_confirmation.html" %}
+{% load i18n static admin_urls static jazzmin %}
+
+{% block breadcrumbs %}
+    {% include "admin/filer/breadcrumbs.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <div class="card card-danger card-outline">
+        <div class="card-header with-border">
+            <h4 class="card-title">
+                Bir nechta ob'ektlarni o'chirish
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <div id="content-main">
+
+                {% if perms_lacking or protected %}
+                    {% if perms_lacking %}
+                        <p>Tanlangan fayllar va/yoki papkalarni oʻchirish quyidagi obʼyektlarni oʻchirishga olib keladi, lekin siz quyidagi turdagi obyektlarni oʻchirishga ruxsatga ega emassiz:</p>
+                        <ol>
+                            {% for obj in perms_lacking %}
+                                <li>{{ obj }}</li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                    {% if protected %}
+                        <p>Tanlangan fayllar va/yoki papkalarni oʻchirish quyidagi obyektlarni oʻchirishni talab qiladi:</p>
+                        <ol>
+                            {% for obj in protected %}
+                                <li>{{ obj }}</li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                {% else %}
+                    <p>Haqiqatan ham tanlangan fayl va/yoki papkalarni oʻchirib tashlamoqchimisiz? Quyidagi barcha ob'ektlar va ularga tegishli elementlar o'chiriladi:</p>
+                    <div class="row">
+                        <div class="col-12 col-sm-9">
+                            <h4>{% trans "Objects" %}</h4>
+                                {% for deletable_object in deletable_objects %}
+                                    <ol>{{ deletable_object|unordered_list }}</ol>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 col-sm-3">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    {% for f in files_queryset %}
+                                        <input type="hidden" name="{{ action_checkbox_name }}" value="file-{{ f.pk }}">
+                                    {% endfor %}
+                                    {% for f in folders_queryset %}
+                                        <input type="hidden" name="{{ action_checkbox_name }}" value="folder-{{ f.pk }}">
+                                    {% endfor %}
+                                    {% if is_popup %}
+                                        <input type="hidden" name="_popup" value="1">
+                                        {% if select_folder %}<input type="hidden" name="select_folder" value="1">{% endif %}
+                                    {% endif %}
+                                    <input type="hidden" name="action" value="delete_files_or_folders">
+                                    <input type="hidden" name="post" value="yes">
+                                    <div class="form-group">
+                                        <input type="submit" class="btn {{ jazzmin_ui.button_classes.danger }} form-control" value="Ha">
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="#" onclick="window.history.back(); return false;" class="btn {{ jazzmin_ui.button_classes.danger }} cancel-link form-control">Yo‘q, orqaga qaytish</a>
+                                    </div>
+                                </form>                            
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

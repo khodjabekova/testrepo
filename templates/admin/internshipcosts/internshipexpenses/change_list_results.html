@@ -1,0 +1,80 @@
+{% load i18n static jazzmin %}
+
+{% if result_hidden_fields %}
+<div class="hiddenfields">
+    {% for item in result_hidden_fields %}{{ item }}{% endfor %}
+</div>
+{% endif %}
+
+{% if results %}
+<div class="card">
+    <div class="card-body table-responsive p-0 ">
+        <table id="result_list" class="table table-striped">
+            <thead>
+                <tr>
+                    {% for header in result_headers %}
+                    <th class="{% header_class header forloop %}" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            {% if header.sortable %}
+                            <a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>
+                            {% else %}
+                            <span>{{ header.text|capfirst }}</span>
+                            {% endif %}
+                            {% if header.sorted %}
+                            <a href="{{ header.url_remove }}">
+                                <div style="margin-top: .2em;" class="fa fa-times float-right"> </div>
+                            </a>
+                            {% if header.ascending %}
+                            <i style="margin-top: .2em;" class="fa fa-sort-alpha-down"> </i>
+                            {% else %}
+                            <i style="margin-top: .2em;" class="fa fa-sort-alpha-up"> </i>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr role="row" class="{% cycle 'even' 'odd' %}">
+                    {% for item in result %}{{ item }}{% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+<style>
+   table .bg-danger a {
+       color: white !important;
+       font-size: 1.2rem;
+       text-decoration: underline;
+   } 
+   table [role=row] a {
+       font-size: 1.2rem;
+       text-decoration: underline;
+   } 
+</style>
+
+<script>
+    const table = document.querySelector('#result_list')
+    console.log(table);
+    const tRow = table.querySelectorAll('[role="row"]')
+    console.log(tRow);
+    tRow.forEach(n => {
+        const dedline = n.querySelector('.field-deadline')
+        const status = n.querySelector('.field-status')
+        if ((parseInt(dedline.innerHTML) < 5) && (status.innerHTML === 'Принято')) {
+            dedline.parentElement.classList.add('bg-danger')
+            dedline.parentElement.classList.add('text-white')
+        }
+        else if ((parseInt(dedline.innerHTML) > 5) && (status.innerHTML === 'Принято')) {
+            dedline.parentElement.classList.add('bg-warning')
+        }
+        else if ((parseInt(dedline.innerHTML) < 1) && (status.innerHTML === 'Новое')) {
+            dedline.parentElement.classList.add('bg-danger')
+        }
+    })
+</script>

@@ -1,0 +1,35 @@
+{% load i18n admin_urls jazzmin %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block submit-row %}
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-edit"></i>
+            {% trans 'Actions' %}
+        </h3>
+    </div>
+    <div class="card-body">
+        {% if new %}
+            <div class="form-group " >
+                <input type="submit" value="Qabul qilish" class="btn {{ jazzmin_ui.button_classes.success }} form-control" name="accept">
+            </div>
+            <div class="form-group">
+                <textarea name="reason" id="" cols="30" rows="10" placeholder="Sabab" class="form-control mb-4" style="height: 120px;"></textarea>
+                <input type="submit" value="Rad etish" class="btn {{ jazzmin_ui.button_classes.danger }} form-control" name="reject">
+            </div>
+        {% endif %}
+        <div class="form-group">
+            <a href="{% url opts|admin_urlname:'changelist' %}" class="btn {{ jazzmin_ui.button_classes.secondary }} form-control">Sahifani yopish</a>
+        </div>
+        <div >
+            <a href="{% url opts|admin_urlname:'report' object_id %}" class="btn {{ jazzmin_ui.button_classes.info }} form-control">
+                <span>Excel yuklab olish</span>
+            </a>
+        </div>
+
+        {% block extra-actions %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
+
